@@ -1,0 +1,22 @@
+@(twitterJson: List[String], githubJson: List[String])
+
+<!DOCTYPE html>
+
+<html>
+    <body>
+        <h2>Tweets mentioning "playframework"</h2>
+        <ul>
+        @for(tweet <- twitterJson) {
+            <li>@tweet</li>
+        }
+        </ul>
+
+        <h2>GitHub Repos mentioning "playframework"</h2>
+        <ul>
+        @for(repo <- githubJson) {
+            <li>@repo</li>
+        }
+        </ul>
+    
+    </body>
+</html>
