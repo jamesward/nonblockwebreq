@@ -8,19 +8,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.JavaConversions._
 
 object ScalaApplication extends Controller {
-
-  def pause(msg:String, duration:Int): String = {
-    println(s":>$msg")
-    Thread.sleep(1000 * duration)
-    println(s"*>$msg")
-    msg
-  }
   
   def getPlaySocialStuff = Action {
     Async {
+      // queue the requests
       val twitterPromise = WS.url("http://search.twitter.com/search.json").withQueryString(("q", "playframework")).get()
       val githubPromise = WS.url("https://api.github.com/legacy/repos/search/playframework").get()
 
+      // wait for responses and when they arrive, render the template and return a 200 response
       for {
         twitterResponse <- twitterPromise
         githubResponse <- githubPromise
@@ -29,6 +24,13 @@ object ScalaApplication extends Controller {
   }
   
   def simple = Action {
+
+    def pause(msg:String, duration:Int): String = {
+      println(s":>$msg")
+      Thread.sleep(1000 * duration)
+      println(s"*>$msg")
+      msg
+    }
     
     Async {
       val t = future { pause("three", 3) }
