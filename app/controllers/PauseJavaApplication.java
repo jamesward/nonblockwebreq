@@ -1,6 +1,5 @@
 package controllers;
 
-import play.Logger;
 import play.libs.F;
 import play.libs.WS;
 import play.mvc.Controller;
