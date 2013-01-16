@@ -7,21 +7,23 @@ import concurrent.duration._
 import concurrent.Await
 
 object PauseScalaApplication extends Controller {
-
-  // execution occupies a thread until completed
+  
+  // this handler occupies a thread until completed
+  // three web requests run in sequence, each uses an additional thread (using only one additional thread at a time
   def sync = Action { implicit request =>
-    val three = Await.result(WS.url(routes.BlockingApplication.pause("three", 3).absoluteURL()).get(), 10 seconds) // block here
-    val one = Await.result(WS.url(routes.BlockingApplication.pause("one", 1).absoluteURL()).get(), 10 seconds) // block here
-    val four = Await.result(WS.url(routes.BlockingApplication.pause("four", 4).absoluteURL()).get(), 10 seconds) // block here
+    val three = Await.result(WS.url(routes.PausingController.pause(3).absoluteURL()).get(), 10 seconds) // block here
+    val one = Await.result(WS.url(routes.PausingController.pause(1).absoluteURL()).get(), 10 seconds) // block here
+    val four = Await.result(WS.url(routes.PausingController.pause(4).absoluteURL()).get(), 10 seconds) // block here
 
     Ok(one.body + three.body + four.body)
   }
 
-  // execution occupies a thread until completed
+  // this handler occupies a thread until completed
+  // three web requests run in parallel, when active they occupy a thread
   def partialAsync = Action { implicit request =>
-    val pauseForThreeFuture = WS.url(routes.BlockingApplication.pause("three", 3).absoluteURL()).get() // schedule now
-    val pauseForOneFuture = WS.url(routes.BlockingApplication.pause("one", 1).absoluteURL()).get() // schedule now
-    val pauseForFourFuture = WS.url(routes.BlockingApplication.pause("four", 4).absoluteURL()).get() // schedule now
+    val pauseForThreeFuture = WS.url(routes.PausingController.pause(3).absoluteURL()).get() // schedule now
+    val pauseForOneFuture = WS.url(routes.PausingController.pause(1).absoluteURL()).get() // schedule now
+    val pauseForFourFuture = WS.url(routes.PausingController.pause(4).absoluteURL()).get() // schedule now
 
     // order doesn't matter
     val three = Await.result(pauseForThreeFuture, 10 seconds)
@@ -31,12 +33,13 @@ object PauseScalaApplication extends Controller {
     Ok(one.body + three.body + four.body)
   }
 
-  // execution only occupies a thread when needed
+  // this handler only occupies a thread when active
+  // three web requests run in parallel, when active the occupy a thread
   def fullAsync = Action { implicit request =>
     Async {
-      val pauseForThreeFuture = WS.url(routes.BlockingApplication.pause("three", 3).absoluteURL()).get() // schedule now
-      val pauseForOneFuture = WS.url(routes.BlockingApplication.pause("one", 1).absoluteURL()).get() // schedule now
-      val pauseForFourFuture = WS.url(routes.BlockingApplication.pause("four", 4).absoluteURL()).get() // schedule now
+      val pauseForThreeFuture = WS.url(routes.PausingController.pause(3).absoluteURL()).get() // schedule now
+      val pauseForOneFuture = WS.url(routes.PausingController.pause(1).absoluteURL()).get() // schedule now
+      val pauseForFourFuture = WS.url(routes.PausingController.pause(4).absoluteURL()).get() // schedule now
 
       for {
         three <- pauseForThreeFuture
