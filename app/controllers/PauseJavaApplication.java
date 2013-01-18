@@ -10,7 +10,7 @@ public class PauseJavaApplication extends Controller {
     // this handler occupies a thread until completed
     // three web requests run in sequence, each uses an additional thread (using only one additional thread at a time
     public static Result sync() {
-        String three = WS.url(routes.PausingController.pause(3).absoluteURL(request())).setQueryParameter("duration", "3").get() .get().getBody(); // block here
+        String three = WS.url(routes.PausingController.pause(3).absoluteURL(request())).setQueryParameter("duration", "3").get().get().getBody(); // block here
         String one = WS.url(routes.PausingController.pause(1).absoluteURL(request())).setQueryParameter("duration", "1").get().get().getBody(); // block here
         String four = WS.url(routes.PausingController.pause(4).absoluteURL(request())).setQueryParameter("duration", "4").get().get().getBody(); // block here
 

@@ -3,6 +3,7 @@
 # ~~~~
 
 GET     /pause                          controllers.PausingController.pause(duration: Int)
+GET     /empty                          controllers.PausingController.empty()
 
 GET     /java/sync                      controllers.PauseJavaApplication.sync()
 GET     /java/async/partial             controllers.PauseJavaApplication.partialAsync()
